@@ -37,17 +37,7 @@ module ClientSideValidations
   
     private
   
-     def is_unique?(resource, attribute, value, id = nil)
-        klass    = constantize_resource(resource)
-        instance = nil
-        instance = klass.send("where", {attribute.to_sym => value})
 
-        if instance.size > 0
-          return instance.first.id.to_i == id.to_i
-        else
-          return true
-        end
-      end
       
     def is_unique?(resource, attribute, value, id = nil)
       klass    = constantize_resource(resource)
