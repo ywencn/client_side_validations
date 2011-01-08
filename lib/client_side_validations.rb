@@ -37,16 +37,32 @@ module ClientSideValidations
   
     private
   
+     def is_unique?(resource, attribute, value, id = nil)
+        klass    = constantize_resource(resource)
+        instance = nil
+        instance = klass.send("where", {attribute.to_sym => value})
+
+        if instance.size > 0
+          return instance.first.id.to_i == id.to_i
+        else
+          return true
+        end
+      end
+      
     def is_unique?(resource, attribute, value, id = nil)
       klass    = constantize_resource(resource)
       instance = nil
-      instance = klass.send("find_by_#{attribute}", value)
+       instance = klass.send("where", {attribute.to_sym => value})
     
-      if instance
+      if instance.size > 0
         if defined?(ActiveRecord) && instance.kind_of?(ActiveRecord::Base)
           return instance.id.to_i == id.to_i
         elsif defined?(Mongoid) && instance.class.included_modules.include?(Mongoid::Document)
-          return instance.id.to_s == id.to_s
+           if instance.size > 0
+              return instance.first.id.to_s == id.to_s
+            else
+              return true
+            end
         end
       else
         return true
